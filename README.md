@@ -79,6 +79,20 @@ To enable the retry middewalre, add a `retry` directive to the disk's configurat
         ],
 ```
 
+# Guzzle options
+To specify options for the underlying Guzzle client the 'guzzle' option can be used.
+Refer to the https://docs.guzzlephp.org/en/stable/request-options.html for Guzzle options
+
+```php
+        'azure' => [
+            'driver'    => 'azure',
+            // Other Disk Options...
+            'guzzle'     => [
+                'timeout' => 5, // set a 5-second timeout
+            ]
+        ],
+```
+
 # Support policy
 
 This package is supported on the current Laravel LTS version, and any later versions. If you are using an older Laravel version, it may work, but I offer no guarantees, nor will I accept pull requests to add this support.

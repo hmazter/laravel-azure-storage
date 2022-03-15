@@ -88,6 +88,11 @@ final class AzureStorageServiceProvider extends ServiceProvider
                 ];
             }
 
+            $guzzle = data_get($config, 'guzzle');
+            if (isset($guzzle) && is_array($guzzle)) {
+                $blobOptions['http'] = $guzzle;
+            }
+
             return BlobRestProxy::createBlobService($endpoint, $blobOptions);
         });
     }

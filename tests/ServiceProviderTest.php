@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use MicrosoftAzure\Storage\Blob\BlobRestProxy;
+use ReflectionClass;
 
 final class ServiceProviderTest extends TestCase
 {
@@ -80,5 +81,24 @@ final class ServiceProviderTest extends TestCase
         $this->assertNotNull($this->app->get(BlobRestProxy::class));
 
         $this->assertTrue($this->app->resolved(BlobRestProxy::class));
+    }
+
+    /** @test */
+    public function is_sets_up_custom_guzzle_options()
+    {
+        $this->app['config']->set('filesystems.disks.azure.guzzle', [
+            'timeout' => 5,
+        ]);
+
+        $blobProxy = $this->app->get(BlobRestProxy::class);
+        $this->assertNotNull($blobProxy);
+
+        // Use reflection to assert private property
+        $reflection = new ReflectionClass($blobProxy);
+        $clientProperty = $reflection->getParentClass()->getProperty('client');
+        $clientProperty->setAccessible(true);
+        /** @var \GuzzleHttp\Client $client */
+        $client = $clientProperty->getValue($blobProxy);
+        $this->assertEquals(5, $client->getConfig('timeout'));
     }
 }
